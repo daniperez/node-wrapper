@@ -1,0 +1,66 @@
+#!/bin/sh
+# Based on http://www.linuxjournal.com/node/1005818
+
+#     #  #######  ######   #    #  
+#  #  #  #     #  #     #  #   #   
+#  #  #  #     #  #     #  #  #    
+#  #  #  #     #  ######   ###     
+#  #  #  #     #  #   #    #  #    
+#  #  #  #     #  #    #   #   #   
+ ## ##   #######  #     #  #    #  
+
+
+###  #     #  
+ #   ##    #  
+ #   # #   #  
+ #   #  #  #  
+ #   #   # #  
+ #   #    ##  
+###  #     #  
+
+
+######   ######   #######   #####   ######   #######   #####    #####   
+#     #  #     #  #     #  #     #  #     #  #        #     #  #     #  
+#     #  #     #  #     #  #        #     #  #        #        #        
+######   ######   #     #  #  ####  ######   #####     #####    #####   
+#        #   #    #     #  #     #  #   #    #              #        #  
+#        #    #   #     #  #     #  #    #   #        #     #  #     #  
+#        #     #  #######   #####   #     #  #######   #####    #####  
+
+##################################
+function get_script_path()
+{
+  dir=`dirname $0`;
+  if [ x$dir = "x." ]
+  then
+    dir=`pwd`
+  fi
+  base=`basename $0`;
+
+  script="$dir/$base"
+}
+
+##################################
+function download_node ()
+{
+  if npm binary doesnt exist then
+
+    wget node
+
+  fi
+}
+
+##################################
+#             Main               #
+##################################
+node_folder = download_node()
+
+if script name is different than node-wrapper && script is not installed then
+  $node_folder/bin/npm install script name  
+  build_tool =  script path 
+else if script name is node-wrapper then
+  get first argument
+  build_tool =  script path to first argument 
+fi
+
+build_tool + parameters
