@@ -64,3 +64,53 @@ else if script name is node-wrapper then
 fi
 
 build_tool + parameters
+
+##########################################################################
+##########################################################################
+##########################################################################
+################################# EXAMPLE
+##########################################################################
+##########################################################################
+##########################################################################
+
+#!/bin/sh
+##########################################################################
+#
+# Buildr bootstrap script for Unix 
+#
+##########################################################################
+JRUBY_VERSION=1.6.5.1
+JRUBY_URL=http://jruby.org.s3.amazonaws.com/downloads/$JRUBY_VERSION/jruby-bin-$JRUBY_VERSION.zip
+JRUBY_BOOTSTRAP_HOME=$HOME/.bootstrap-buildr
+JRUBY_ZIP=$JRUBY_BOOTSTRAP_HOME/jruby-$JRUBY_VERSION.zip
+JRUBY_DESTINATION_FOLDER=$JRUBY_BOOTSTRAP_HOME
+JRUBY_ROOT=$JRUBY_DESTINATION_FOLDER/jruby-$JRUBY_VERSION
+LOG_FILE=buildr-bootstrap.log
+##########################################################################
+
+echo > $LOG_FILE
+
+rm -rf $JRUBY_BOOTSTRAP_HOME
+
+mkdir -p $JRUBY_BOOTSTRAP_HOME
+
+if [ ! -e "$JRUBY_ZIP" ]; then
+
+  echo Downloading jruby
+  wget -O $JRUBY_ZIP $JRUBY_URL >> $LOG_FILE
+fi
+
+echo Unzipping jruby
+unzip -o $JRUBY_ZIP -d $JRUBY_DESTINATION_FOLDER >> $LOG_FILE
+
+echo Installing buildr
+$JRUBY_ROOT/bin/jruby -S jgem install buildr >> $LOG_FILE
+
+echo Softly massaging Eclipse 
+rm -f .classpath
+rm -f .project
+$JRUBY_ROOT/bin/jruby $JRUBY_ROOT/bin/buildr eclipse
+
+echo Done!
+
+
