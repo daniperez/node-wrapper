@@ -1,73 +1,69 @@
 @echo off
 @rem ##########################################################################
 @rem
-@rem  Buildr startup script for Windows
+@rem  node-wrapper startup script for Windows
 @rem
 @rem ##########################################################################
-set JRUBY_VERSION=1.6.5.1
-set JRUBY_URL=http://jruby.org.s3.amazonaws.com/downloads/%JRUBY_VERSION%/jruby-bin-%JRUBY_VERSION%.zip
-set JRUBY_BOOTSTRAP_HOME=%TEMP%
-set JRUBY_ZIP=%JRUBY_BOOTSTRAP_HOME%\jruby-%JRUBY_VERSION%.zip
-set JRUBY_DESTINATION_FOLDER=%JRUBY_BOOTSTRAP_HOME%
-set JRUBY_ROOT=%JRUBY_DESTINATION_FOLDER%\jruby-%JRUBY_VERSION%
-set LOG_FILE=buildr-bootstrap.log
+set NODEJS_VERSION=0.8.9
+set NPM_VERSION=1.1.9
+set NODEJS_PREFIX=%CD%\.node
+set NODEJS_URL=http://nodejs.org/dist/v%NODEJS_VERSION%/node.exe
+set NPM_URL=http://nodejs.org/dist/npm/npm-%NPM_VERSION%.zip
+set LOG_FILE=node-wrapper.log
+set ZIP=7za.exe
 @rem ##########################################################################
 
-echo (writing a log of the setup process to %cd%\%LOG_FILE%)
+set _NODE_JS_EXE=%NODEJS_PREFIX%\node-%NODEJS_VERSION%.exe
+set _NPM_ZIP=%NODEJS_PREFIX%\npm-%NPM_VERSION%.zip
 
-echo %CD%
-
+@rem We create the log file and Node's folder.
 echo > %LOG_FILE%
+if NOT EXIST "%NODEJS_PREFIX%" mkdir %NODEJS_PREFIX%
 
-if EXIST "%CD%\buildr.bat" GOTO eclipse
+if EXIST "%_NODE_JS_EXE%" goto installnpm
 
-if EXIST "%JRUBY_ZIP%" GOTO unzipjruby
+@rem ##########################################################################
+:installnodejs
+@rem ##########################################################################
+echo Downloading nodejs into %NODEJS_PREFIX% (be patient, it can take several minutes)
 
-if EXIST "%JRUBY_DESTINATION_FOLDER%" GOTO installbuildr
-
-@rem ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-:downloadjruby
-@rem ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-echo Downloading jruby
-
-@bitsadmin /reset > %LOG_FILE%
-@bitsadmin /create JRubyDownloadJob > %LOG_FILE%
-@bitsadmin /addfile JRubyDownloadJob %JRUBY_URL% %JRUBY_ZIP% >> %LOG_FILE%
-@bitsadmin /resume JRubyDownloadJob >> %LOG_FILE%
+@bitsadmin /cancel NodeJsDownloadJob > %LOG_FILE%
+@bitsadmin /create NodeJsDownloadJob >> %LOG_FILE%
+@bitsadmin /addfile NodeJsDownloadJob %NODEJS_URL% %_NODE_JS_EXE% >> %LOG_FILE%
+@bitsadmin /resume NodeJsDownloadJob >> %LOG_FILE%
 
 :loop
-FOR /F "delims=" %%d in ('bitsadmin /RawReturn /GetState JRubyDownloadJob') do @set state=%%d
+FOR /F "delims=" %%d in ('bitsadmin /RawReturn /GetState NodeJsDownloadJob') do @set state=%%d
 @sleep 1
+echo|set /p=". "
 if not "%state%" == "TRANSFERRED" goto loop
+echo ""
 
-@bitsadmin /complete JRubyDownloadJob >> %LOG_FILE%
+@bitsadmin /complete NodeJsDownloadJob >> %LOG_FILE%
 
-@rem ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-:unzipjruby
-@rem ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-echo Unzipping jruby
-"c:\Program Files\7-Zip\7z.exe" x -o "%JRUBY_DESTINATION_FOLDER%" -y "%JRUBY_ZIP%" >> %LOG_FILE%
+@rem ##########################################################################
+:installnpm
+@rem ##########################################################################
 
-@rem ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-:installbuildr
-@rem ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-echo Installing buildr
-"%JRUBY_ROOT%\bin\jruby.exe" -S jgem  install buildr >> %LOG_FILE%
+if EXIST "%_NPM_ZIP%" goto unzipnpm
 
-@rem ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-:eclipse
-@rem ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+echo Downloading npm into %NODEJS_PREFIX% (be patient, it can take several minutes)
 
-echo Generating buildr script
-echo cd /D %CD% > buildr.bat
-echo %JRUBY_ROOT%\bin\jruby.bat %JRUBY_ROOT%\bin\buildr %%* >> buildr.bat
+@bitsadmin /cancel NpmDownloadJob > %LOG_FILE%
+@bitsadmin /create NpmDownloadJob >> %LOG_FILE%
+@bitsadmin /addfile NpmDownloadJob %NPM_URL% %_NPM_ZIP% >> %LOG_FILE%
+@bitsadmin /resume NpmDownloadJob >> %LOG_FILE%
 
-echo Softly massaging Eclipse
-set ECLIPSE_PROJECT_HOME=.
-if NOT EXIST buildfile set /P ECLIPSE_PROJECT_HOME="Can you tell me the path to your Eclipse project or just Ctrl+C if none? "
-PUSHD "%ECLIPSE_PROJECT_HOME%"
-del /Q /F .classpath 
-del /Q /F .project
+:loop
+FOR /F "delims=" %%d in ('bitsadmin /RawReturn /GetState NpmDownloadJob') do @set state=%%d
+@sleep 1
+echo|set /p=". "
+if not "%state%" == "TRANSFERRED" goto loop
+echo ""
 
-"%JRUBY_ROOT%\bin\jruby.bat" "%JRUBY_ROOT%\bin\buildr" -f buildfile eclipse artifacts:javadoc
-POPD
+@bitsadmin /complete NpmDownloadJob >> %LOG_FILE%
+
+:unzipnpm
+echo Installing npm
+echo "%ZIP% x -o %NODEJS_PREFIX% -y %_NPM_ZIP%"
+"%ZIP%" x -o"%NODEJS_PREFIX%" -y "%_NPM_ZIP%"
