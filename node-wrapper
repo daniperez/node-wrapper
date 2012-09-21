@@ -14,21 +14,32 @@ LOG_FILE="node-wrapper.log"
 ##########################################################################
 
 _NODEJS_ZIP="$NODEJS_PREFIX/node-$NODEJS_VERSION.zip"
-_NODEJS_EXE="$NODEJS_PREFIX/node-v$NODEJS_VERSION-$OS-x$ARCH/bin/node"
-_NPM_EXE="$NODEJS_PREFIX/node-v$NODEJS_VERSION-$OS-x$ARCH/bin/npm"
+_NODEJS_BIN="$NODEJS_PREFIX/node-v$NODEJS_VERSION-$OS-x$ARCH/bin"
+_NODEJS_EXE="$_NODEJS_BIN/node"
+_NPM_EXE="$_NODEJS_BIN/npm"
 
 ##########################################################################
-# Error handling 
+# Guesses the name of the tool to be used 
 ##########################################################################
-check_error () 
+guess_tool_name ()
 {
-  if [ ! $? -eq 0 ]
-  then
-    echo "Error in line $(($1-1))" 1>&2
-    exit -1
+  if [ "$(basename $0)" == "node-wrapper" ]; then
+    # Script name was not changed. We expect the tool to us as first argument.
+    if [ "x$1" == "x" ]; then
+       echo "You called node-wrapper without arguments." 1>&2 || exit 1
+       return 1
+    else
+      echo "$1"
+      shift
+    fi
+  else
+    echo "$(basename $0)"
   fi
 }
 
+##########################################################################
+# MAIN
+##########################################################################
 echo "" > "$LOG_FILE"
 
 mkdir -p "$NODEJS_PREFIX"
@@ -39,8 +50,7 @@ mkdir -p "$NODEJS_PREFIX"
 if [ ! -e "$_NODEJS_ZIP" ]; then
 
   echo "Downloading nodejs into $NODEJS_PREFIX (be patient, it can take several minutes)"
-  wget  -O "$_NODEJS_ZIP" "$NODEJS_URL" 1>&2 >> "$LOG_FILE"
-  check_error "$LINENO"
+  wget -O "$_NODEJS_ZIP" "$NODEJS_URL" >> "$LOG_FILE" 2>&1 || exit 1
 
 fi
 
@@ -50,6 +60,21 @@ fi
 if [ ! -x "$_NODEJS_EXE" ]; then
 
   echo "Untarring nodejs at $NODEJS_PREFIX"
-  tar xvz -C "$NODEJS_PREFIX" -f "$_NODEJS_ZIP" 1>&2 >> "$LOG_FILE"
-  check_error "$LINENO"
+  tar xvz -C "$NODEJS_PREFIX" -f "$_NODEJS_ZIP" >> "$LOG_FILE" 2>&1 || exit 1
 fi
+
+##########################################################################
+# Execute tool (install if it's not installed)
+##########################################################################
+TOOL=$(guess_tool_name $*) || exit 1
+PATH="$_NODEJS_BIN:$PATH"
+# Should we check NPM database?:
+#   if [ $($_NPM_EXE ls $1 | grep empty )  ]; then
+if [ ! $(which "$TOOL" > /dev/null 2>&1 ; echo "$?") -eq 0  ]; then
+  echo "Installing $TOOL"
+  "$_NPM_EXE" install -g "$TOOL" >> "$LOG_FILE" 2>&1 
+fi
+
+$TOOL $*
+
+
