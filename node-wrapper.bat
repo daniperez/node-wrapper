@@ -66,3 +66,5 @@ echo ""
 :unzipnpm
 echo Installing npm
 "%ZIP%" x -o"%NODEJS_PREFIX%" -y "%_NPM_ZIP%" >> %LOG_FILE%
+
+echo Done!

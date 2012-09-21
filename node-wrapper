@@ -1,41 +1,43 @@
 #!/bin/sh
 ##########################################################################
 #
-# Buildr bootstrap script for Unix 
+# node-wrapper script for Unix 
 #
 ##########################################################################
-JRUBY_VERSION=1.6.5.1
-JRUBY_URL=http://jruby.org.s3.amazonaws.com/downloads/$JRUBY_VERSION/jruby-bin-$JRUBY_VERSION.zip
-JRUBY_BOOTSTRAP_HOME=$HOME/.bootstrap-buildr
-JRUBY_ZIP=$JRUBY_BOOTSTRAP_HOME/jruby-$JRUBY_VERSION.zip
-JRUBY_DESTINATION_FOLDER=$JRUBY_BOOTSTRAP_HOME
-JRUBY_ROOT=$JRUBY_DESTINATION_FOLDER/jruby-$JRUBY_VERSION
-LOG_FILE=buildr-bootstrap.log
+ARCH=$(sed -e 's/i386/86/' -e 's/x86_64/64/'x86)
+SO=$(uname -o | sed -e 's/GNU\/Linux/linux/' -e 's/Darwin/darwin/')
+NODEJS_VERSION = 0.8.9
+NPM_VERSION    = 1.1.9
+NODEJS_PREFIX  = "$PWD/.node"
+NODEJS_URL     = "http://nodejs.org/dist/v$NODEJS_VERSION/node-v$NODEJS_VERSION-$(OS)-$(ARCH).tar.gz"
+NPM_URL        = "http://nodejs.org/dist/npm/npm-$NPM_VERSION.tar.gz"
+LOG_FILE       = node-wrapper.log
 ##########################################################################
 
 echo > $LOG_FILE
 
-rm -rf $JRUBY_BOOTSTRAP_HOME
+_NODE_JS_EXE = "$NODEJS_PREFIX/node-$NODEJS_VERSION"
+_NPM_ZIP     = "$NODEJS_PREFIX/npm-$NPM_VERSION.zip"
 
-mkdir -p $JRUBY_BOOTSTRAP_HOME
+##########################################################################
+# Download nodejs
+##########################################################################
+if [ ! -x "$_NODE_JS_EXE" ]; then
 
-if [ ! -e "$JRUBY_ZIP" ]; then
-
-  echo Downloading jruby
-  wget -O $JRUBY_ZIP $JRUBY_URL >> $LOG_FILE
+  echo "Downloading nodejs into $NODEJS_PREFIX (be patient, it can take several minutes)"
+  wget  -O "$_NODE_JS_EXE" "$NODEJS_URL" >> "$LOG_FILE"
 fi
 
-echo Unzipping jruby
-unzip -o $JRUBY_ZIP -d $JRUBY_DESTINATION_FOLDER >> $LOG_FILE
+##########################################################################
+# Download npm
+##########################################################################
+if [ ! -e "$_NPM_ZIP" ]; then
 
-echo Installing buildr
-$JRUBY_ROOT/bin/jruby -S jgem install buildr >> $LOG_FILE
+  echo "Downloading npm into $NODEJS_PREFIX (be patient, it can take several minutes)"
+  wget  -O "$_NPM_ZIP" "$NPM_VERSION" >> "$LOG_FILE"
+fi
 
-echo Softly massaging Eclipse 
-rm -f .classpath
-rm -f .project
-$JRUBY_ROOT/bin/jruby $JRUBY_ROOT/bin/buildr eclipse
+echo "Installing npm"
+tar xvfz -C "$NODEJS_PREFIX" "$_NPM_ZIP" >> "$LOG_FILE"
 
-echo Done!
-
-
+echo "Done!"
