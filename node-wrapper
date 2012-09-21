@@ -4,40 +4,52 @@
 # node-wrapper script for Unix 
 #
 ##########################################################################
-ARCH=$(sed -e 's/i386/86/' -e 's/x86_64/64/'x86)
-SO=$(uname -o | sed -e 's/GNU\/Linux/linux/' -e 's/Darwin/darwin/')
-NODEJS_VERSION = 0.8.9
-NPM_VERSION    = 1.1.9
-NODEJS_PREFIX  = "$PWD/.node"
-NODEJS_URL     = "http://nodejs.org/dist/v$NODEJS_VERSION/node-v$NODEJS_VERSION-$(OS)-$(ARCH).tar.gz"
-NPM_URL        = "http://nodejs.org/dist/npm/npm-$NPM_VERSION.tar.gz"
-LOG_FILE       = node-wrapper.log
+ARCH="$(uname -i | sed -e 's/i386/86/' -e 's/x86_64/64/')"
+OS="$(uname -o | sed -e 's/GNU\/Linux/linux/' -e 's/Darwin/darwin/')"
+NODEJS_VERSION="0.8.9"
+NPM_VERSION="1.1.9"
+NODEJS_PREFIX="$PWD/.node"
+NODEJS_URL="http://nodejs.org/dist/v$NODEJS_VERSION/node-v$NODEJS_VERSION-$OS-x$ARCH.tar.gz"
+LOG_FILE="node-wrapper.log"
 ##########################################################################
 
-echo > $LOG_FILE
-
-_NODE_JS_EXE = "$NODEJS_PREFIX/node-$NODEJS_VERSION"
-_NPM_ZIP     = "$NODEJS_PREFIX/npm-$NPM_VERSION.zip"
+_NODEJS_ZIP="$NODEJS_PREFIX/node-$NODEJS_VERSION.zip"
+_NODEJS_EXE="$NODEJS_PREFIX/node-v$NODEJS_VERSION-$OS-x$ARCH/bin/node"
+_NPM_EXE="$NODEJS_PREFIX/node-v$NODEJS_VERSION-$OS-x$ARCH/bin/npm"
 
 ##########################################################################
-# Download nodejs
+# Error handling 
 ##########################################################################
-if [ ! -x "$_NODE_JS_EXE" ]; then
+check_error () 
+{
+  if [ ! $? -eq 0 ]
+  then
+    echo "Error in line $(($1-1))" 1>&2
+    exit -1
+  fi
+}
+
+echo "" > "$LOG_FILE"
+
+mkdir -p "$NODEJS_PREFIX"
+
+##########################################################################
+# Install nodejs
+##########################################################################
+if [ ! -e "$_NODEJS_ZIP" ]; then
 
   echo "Downloading nodejs into $NODEJS_PREFIX (be patient, it can take several minutes)"
-  wget  -O "$_NODE_JS_EXE" "$NODEJS_URL" >> "$LOG_FILE"
+  wget  -O "$_NODEJS_ZIP" "$NODEJS_URL" 1>&2 >> "$LOG_FILE"
+  check_error "$LINENO"
+
 fi
 
 ##########################################################################
-# Download npm
+# Untar nodejs
 ##########################################################################
-if [ ! -e "$_NPM_ZIP" ]; then
+if [ ! -x "$_NODEJS_EXE" ]; then
 
-  echo "Downloading npm into $NODEJS_PREFIX (be patient, it can take several minutes)"
-  wget  -O "$_NPM_ZIP" "$NPM_VERSION" >> "$LOG_FILE"
+  echo "Untarring nodejs at $NODEJS_PREFIX"
+  tar xvz -C "$NODEJS_PREFIX" -f "$_NODEJS_ZIP" 1>&2 >> "$LOG_FILE"
+  check_error "$LINENO"
 fi
-
-echo "Installing npm"
-tar xvfz -C "$NODEJS_PREFIX" "$_NPM_ZIP" >> "$LOG_FILE"
-
-echo "Done!"

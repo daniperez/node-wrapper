@@ -1,0 +1,7 @@
+# Vi
+*.swp
+*.swo
+
+# node-wrapper
+.node
+node-wrapper.log
