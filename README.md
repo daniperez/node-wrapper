@@ -1,12 +1,9 @@
- * * *
 node-wrapper
 ============
 
 The goal of node-wrapper is to bootstrap development environments based
 on [node.js](http://nodejs.org)' build tools such as [grunt](http://gruntjs.com/)
 or [brunch](http://brunch.io).
-
- * * *
 
 The Importance of Bootstrapping 
 -------------------------------
