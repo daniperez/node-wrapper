@@ -68,8 +68,6 @@ fi
 ##########################################################################
 TOOL=$(guess_tool_name $*) || exit 1
 PATH="$_NODEJS_BIN:$PATH"
-# Should we check NPM database?:
-#   if [ $($_NPM_EXE ls $1 | grep empty )  ]; then
 if [ ! $(which "$TOOL" > /dev/null 2>&1 ; echo "$?") -eq 0  ]; then
   echo "Installing $TOOL"
   "$_NPM_EXE" install -g "$TOOL" >> "$LOG_FILE" 2>&1 

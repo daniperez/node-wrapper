@@ -21,6 +21,9 @@ set _NPM_EXE=%NODEJS_PREFIX%\npm.cmd
 echo > %LOG_FILE%
 if NOT EXIST "%NODEJS_PREFIX%" mkdir %NODEJS_PREFIX%
 
+@rem ##########################################################################
+@rem ### Check & install node.js                                               
+@rem ##########################################################################
 if NOT EXIST %_NODE_JS_EXE%  (
 	echo Downloading nodejs into %NODEJS_PREFIX%. Be patient, it can take several minutes.
 	
@@ -39,7 +42,10 @@ if NOT EXIST %_NODE_JS_EXE%  (
 	@bitsadmin /complete NodeJsDownloadJob >> %LOG_FILE%
 )
 
-if not EXIST %_NPM_ZIP% (
+@rem ##########################################################################
+@rem ### Check & install npm                                               
+@rem ##########################################################################
+if NOT EXIST %_NPM_ZIP% (
 
 	echo Downloading npm into %NODEJS_PREFIX%. Be patient, it can take several minutes.
 	
@@ -63,9 +69,12 @@ if not EXIST %_NPM_ZIP% (
 
 set TOOL=""
 
+@rem ##########################################################################
+@rem ### Guesses which tool to use
+@rem ##########################################################################
 call :guess_tool_name %*
 
-if not %TOOL% == "" (
+if NOT %TOOL% == "" (
 				
 	SETLOCAL
 	set PATH=%NODEJS_PREFIX%;%PATH%
