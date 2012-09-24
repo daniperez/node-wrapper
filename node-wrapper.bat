@@ -33,7 +33,7 @@ if NOT EXIST %_NODE_JS_EXE%  (
 	FOR /F "delims=" %%d in ('bitsadmin /RawReturn /GetState NodeJsDownloadJob') do @set state=%%d
 	@sleep 1
 	echo|set /p=". "
-	if not "%state%" == "TRANSFERRED" goto loopnode
+	if not %state% == 'TRANSFERRED' goto loopnode
 	echo .
 	
 	@bitsadmin /complete NodeJsDownloadJob >> %LOG_FILE%
@@ -52,7 +52,7 @@ if not EXIST %_NPM_ZIP% (
 	FOR /F "delims=" %%d in ('bitsadmin /RawReturn /GetState NpmDownloadJob') do @set state=%%d
 	@sleep 1
 	echo|set /p=". "
-	if not "%state%" == "TRANSFERRED" goto loopnpm
+	if not %state% == 'TRANSFERRED' goto loopnpm
 	echo .
 		
 	@bitsadmin /complete NpmDownloadJob >> %LOG_FILE%
