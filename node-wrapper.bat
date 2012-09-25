@@ -1,10 +1,10 @@
-@echo off 
+@echo off
 @rem ##########################################################################
 @rem
 @rem  node-wrapper startup script for Windows
 @rem
 @rem ##########################################################################
-set NODEJS_VERSION=0.8.9
+set NODEJS_VERSION=0.9.2
 set NPM_VERSION=1.1.59
 set NODEJS_PREFIX=%CD%\.node
 set NODEJS_URL=http://nodejs.org/dist/v%NODEJS_VERSION%/node.exe
@@ -36,7 +36,7 @@ if NOT EXIST %_NODE_JS_EXE%  (
 	FOR /F "delims=" %%d in ('bitsadmin /RawReturn /GetState NodeJsDownloadJob') do @set state=%%d
 	@sleep 1
 	echo|set /p=". "
-	if not %state% == 'TRANSFERRED' goto loopnode
+	if NOT '%state%' == 'TRANSFERRED' goto loopnode
 	echo .
 	
 	@bitsadmin /complete NodeJsDownloadJob >> %LOG_FILE%
@@ -58,7 +58,7 @@ if NOT EXIST %_NPM_ZIP% (
 	FOR /F "delims=" %%d in ('bitsadmin /RawReturn /GetState NpmDownloadJob') do @set state=%%d
 	@sleep 1
 	echo|set /p=". "
-	if not %state% == 'TRANSFERRED' goto loopnpm
+	if not '%state%' == 'TRANSFERRED' goto loopnpm
 	echo .
 		
 	@bitsadmin /complete NpmDownloadJob >> %LOG_FILE%
