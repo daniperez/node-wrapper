@@ -2,6 +2,9 @@
 @rem ##########################################################################
 @rem
 @rem  node-wrapper startup script for Windows
+@rem  ---------------------------------------
+@rem
+@rem  See COPYING file for the legal stuff.
 @rem
 @rem ##########################################################################
 set NODEJS_VERSION=0.8.9
