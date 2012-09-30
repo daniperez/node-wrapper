@@ -20,9 +20,9 @@ Getting started
 
 The easiest way of getting started is to copy ```node-wrapper``` and
 ```node-wrapper.bat``` to your project root folder where your build or configuration
-scripts are. But rename them to match your tool of choice.
+scripts are. Then rename them to match your tool of choice.
 
-If you wanted to use [brunch](http://brunch.io) for example, copy
+For example, if you wanted to use [brunch](http://brunch.io), copy
 ```node-wrapper``` and ```node-wrapper.bat``` to your project and rename
 them to ```brunch``` and ```brunch.bat``` respectively. It's important
 to copy both scripts to have both Unix and Windows developers happy.
@@ -31,7 +31,8 @@ the original [brunch](http://brunch.io) tool: it will check if the
 tool is available, if not, it will download it and execute it along
 with the parameters passed.
 
-Future
-------
-
-*   Allow generic script names like ```autogen.sh``` or ```bootstrap.sh```    
+You can also keep the original name of the scripts, ```node-wrapper```,
+and pass the tool name as first argument:
+```shell
+> ./node-wrapper brunch build
+```
