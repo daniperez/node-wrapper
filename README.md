@@ -19,8 +19,8 @@ Getting started
 ---------------
 
 The easiest way of getting started is to copy ```node-wrapper``` and
-```node-wrapper.bat``` to your project root folder where your build or configuration
-scripts are. Then rename them to match your tool of choice.
+```node-wrapper.bat``` to your project root folder where your build or
+configuration scripts are. Then rename them to match your tool of choice.
 
 For example, if you wanted to use [brunch](http://brunch.io), copy
 ```node-wrapper``` and ```node-wrapper.bat``` to your project and rename
@@ -36,3 +36,10 @@ and pass the tool name as first argument:
 ```shell
 > ./node-wrapper brunch build
 ```
+
+Shortcomings
+------------
+
+The Windows version, ```node-wrapper.bat```, needs to download and unzip
+Npm. I had to add ```7za.exe``` to the distribution since it doesn't
+seem to exist an uniform way of unzipping files in Windows.
