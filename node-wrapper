@@ -4,13 +4,23 @@
 # node-wrapper script for Unix 
 #
 ##########################################################################
+# Mingw/Msys users won't be able to execute batch files in the command
+# line, we help them to get out of here:
+##########################################################################
+if [ $(uname -s | grep -c MINGW) -ge 1 ]; then
+  cmd //c "$(basename $0.bat) $*"
+  exit
+fi
+##########################################################################
+# Change these variables to fit your needs.
+##########################################################################
 ARCH="$(uname -i | sed -e 's/i386/86/' -e 's/x86_64/64/')"
 OS="$(uname -o | sed -e 's/GNU\/Linux/linux/' -e 's/Darwin/darwin/')"
 NODEJS_VERSION="0.8.9"
 NPM_VERSION="1.1.9"
 NODEJS_PREFIX="$PWD/.node"
 NODEJS_URL="http://nodejs.org/dist/v$NODEJS_VERSION/node-v$NODEJS_VERSION-$OS-x$ARCH.tar.gz"
-LOG_FILE="node-wrapper.log"
+LOG_FILE="/dev/null"
 ##########################################################################
 
 _NODEJS_ZIP="$NODEJS_PREFIX/node-$NODEJS_VERSION.zip"
@@ -26,7 +36,16 @@ guess_tool_name ()
   if [ "$(basename $0)" == "node-wrapper" ]; then
     # Script name was not changed. We expect the tool to us as first argument.
     if [ "x$1" == "x" ]; then
-       echo "You called node-wrapper without arguments." 1>&2 || exit 1
+       echo "No arguments passed."                                     1>&2
+       echo ""                                                         1>&2
+       echo "Usage: $0 [tool] [tool options]"                          1>&2
+       echo ""                                                         1>&2
+       echo "Examples:"                                                1>&2
+       echo "       $0 grunt watch"                                    1>&2
+       echo "       $0 brunch build"                                   1>&2
+       echo ""                                                         1>&2
+       echo "You can also rename $0 to the name of your tool and then" 1>&2
+       echo "you won't need to pass the tool name in the command line" 1>&2
        return 1
     else
       echo "$1"
@@ -38,41 +57,44 @@ guess_tool_name ()
 }
 
 ##########################################################################
+# Installs node.js for Linux and Darwin 
+##########################################################################
+install_node ()
+{
+  if [ ! -x "$_NODEJS_EXE" ]; then
+
+    if [ ! -e "$_NODEJS_ZIP" ]; then
+
+      echo "Downloading nodejs into $NODEJS_PREFIX (can take several minutes)"
+      wget -O "$_NODEJS_ZIP" "$NODEJS_URL" > "$LOG_FILE" 2>&1 \
+           || (rm "$_NODEJS_ZIP" && echo "Error downloading nodejs" && exit 1)
+    fi
+
+    echo "Untarring nodejs at $NODEJS_PREFIX"
+    tar xvz -C "$NODEJS_PREFIX" -f "$_NODEJS_ZIP" >> "$LOG_FILE" 2>&1 \
+           || (echo "Error untarring nodejs" && exit 1)
+  fi
+}
+
+##########################################################################
 # MAIN
 ##########################################################################
+
 echo "" > "$LOG_FILE"
 
 mkdir -p "$NODEJS_PREFIX"
 
-##########################################################################
-# Install nodejs
-##########################################################################
-if [ ! -e "$_NODEJS_ZIP" ]; then
+install_node
 
-  echo "Downloading nodejs into $NODEJS_PREFIX (be patient, it can take several minutes)"
-  wget -O "$_NODEJS_ZIP" "$NODEJS_URL" >> "$LOG_FILE" 2>&1 || exit 1
-
-fi
-
-##########################################################################
-# Untar nodejs
-##########################################################################
-if [ ! -x "$_NODEJS_EXE" ]; then
-
-  echo "Untarring nodejs at $NODEJS_PREFIX"
-  tar xvz -C "$NODEJS_PREFIX" -f "$_NODEJS_ZIP" >> "$LOG_FILE" 2>&1 || exit 1
-fi
-
-##########################################################################
-# Execute tool (install if it's not installed)
-##########################################################################
 TOOL=$(guess_tool_name $*) || exit 1
-PATH="$_NODEJS_BIN:$PATH"
+
+PATH="$_NODEJS_BIN:"node_modules/.bin/":$PATH"
+
 if [ ! $(which "$TOOL" > /dev/null 2>&1 ; echo "$?") -eq 0  ]; then
   echo "Installing $TOOL"
-  "$_NPM_EXE" install -g "$TOOL" >> "$LOG_FILE" 2>&1 
+  "$_NPM_EXE" install "$TOOL" >> "$LOG_FILE" 2>&1 
+  "$_NPM_EXE" install >> "$LOG_FILE" 2>&1 
 fi
 
 $TOOL $*
-
 

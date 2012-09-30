@@ -47,24 +47,24 @@ if NOT EXIST %_NODE_JS_EXE%  (
 @rem ##########################################################################
 if NOT EXIST %_NPM_ZIP% (
 
-	echo Downloading npm into %NODEJS_PREFIX%. Be patient, it can take several minutes.
-	
-	@bitsadmin /cancel NpmDownloadJob >> %LOG_FILE%
-	@bitsadmin /create NpmDownloadJob >> %LOG_FILE%
-	@bitsadmin /addfile NpmDownloadJob %NPM_URL% %_NPM_ZIP% >> %LOG_FILE%
-	@bitsadmin /resume NpmDownloadJob >> %LOG_FILE%
-	
-	:loopnpm
-	FOR /F "delims=" %%d in ('bitsadmin /RawReturn /GetState NpmDownloadJob') do @set state=%%d
-	@sleep 1
-	echo|set /p=". "
-	if not %state% == 'TRANSFERRED' goto loopnpm
-	echo .
-		
-	@bitsadmin /complete NpmDownloadJob >> %LOG_FILE%
-	
-	echo Installing npm
-	"%ZIP%" x -o"%NODEJS_PREFIX%" -y "%_NPM_ZIP%" >> %LOG_FILE%
+  echo Downloading npm into %NODEJS_PREFIX%. Be patient, it can take several minutes.
+
+  @bitsadmin /cancel NpmDownloadJob >> %LOG_FILE%
+  @bitsadmin /create NpmDownloadJob >> %LOG_FILE%
+  @bitsadmin /addfile NpmDownloadJob %NPM_URL% %_NPM_ZIP% >> %LOG_FILE%
+  @bitsadmin /resume NpmDownloadJob >> %LOG_FILE%
+
+  :loopnpm
+  FOR /F "delims=" %%d in ('bitsadmin /RawReturn /GetState NpmDownloadJob') do @set state=%%d
+  @sleep 1
+  echo|set /p=". "
+  if not '%state%' == 'TRANSFERRED' goto loopnpm
+  echo .
+
+  @bitsadmin /complete NpmDownloadJob >> %LOG_FILE%
+
+  echo Installing npm
+  "%ZIP%" x -o"%NODEJS_PREFIX%" -y "%_NPM_ZIP%" >> %LOG_FILE%
 )
 
 set TOOL=""
@@ -75,35 +75,45 @@ set TOOL=""
 call :guess_tool_name %*
 
 if NOT %TOOL% == "" (
-				
-	SETLOCAL
-	set PATH=%NODEJS_PREFIX%;%PATH%
-	ENDLOCAL
-	if not EXIST %NODEJS_PREFIX%\%TOOL%.cmd (
 
-		IF ERRORLEVEL 0 (
-			echo Installing %TOOL%...
-			"%_NPM_EXE%" install -g "%TOOL%" >> %LOG_FILE% 2>&1
-			echo ... installed.
-		)
-	)
-			
-	%NODEJS_PREFIX%\%TOOL%.cmd %*
+  SETLOCAL
+  set PATH=%NODEJS_PREFIX%;%PATH%
+  if not EXIST %NODEJS_PREFIX%\%TOOL%.cmd (
+
+    IF ERRORLEVEL 0 (
+      echo Installing %TOOL%...
+      "%_NPM_EXE%" install -g "%TOOL%" >> %LOG_FILE% 2>&1
+      echo ... installed.
+    )
+  )
+
+  %NODEJS_PREFIX%\%TOOL%.cmd %*
+  ENDLOCAL
 )
 
 @rem ##########################################################################
 :guess_tool_name
-  
+
   set basename=
   for /F %%i in ("%~f0") do set basename=%%~ni
-  
+
   if  "%basename%" == "node-wrapper" (
     if "x%~1" == "x" (
-       echo You called node-wrapper without arguments.
+       echo No arguments passed.                                     
+       echo                                                          
+       echo Usage: %~f0 [tool] [tool options]                          
+       echo                                                          
+       echo Examples:                                                
+       echo        %~f0 grunt watch                                    
+       echo        %~f0 brunch build                                   
+       echo                                                          
+       echo You can also rename %~f0 to the name of your tool and then 
+       echo you won't need to pass the tool name in the command line 
     ) else (
       set TOOL=%~1
       SHIFT
     )
   ) else (
-  	for /F %%i in ("%~f0") do set TOOL=%%~ni
+    for /F %%i in ("%~f0") do set TOOL=%%~ni
   )
+
