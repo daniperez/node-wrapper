@@ -12,6 +12,11 @@ Start hacking on any project shouldn't involve following long installing instruc
 Any instruction, any single setup step should be automatized in a script. The script
 becomes your instructions.
 
+While tools such as grunt or brunch allow to automate everything, developers still have
+to install node and the build tool of choice. With ```node-wrapper``` you don't need to install
+any of them: it will check if the tool is available, otherwise it will download it along with
+node if necessary.
+
 For a better explanation about how good bootstrapping is, check [Zach's Unsucking Your Team's Development Environment presentation](http://zachholman.com/talk/unsucking-your-teams-development-environment). Also inspired by
 [Gradle Wrapper](http://gradle.org/docs/current/userguide/gradle_wrapper.html).
 
