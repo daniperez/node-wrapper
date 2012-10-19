@@ -37,9 +37,11 @@ and pass the tool name as first argument:
 > ./node-wrapper brunch build
 ```
 
-Windows caveats
----------------
+Windows caveat
+--------------
 
 The Windows version, ```node-wrapper.bat```, needs to download and unzip
-```npm```, therefore I had to add ```7za.exe``` to the distribution since it doesn't
-seem to exist an uniform way of unzipping files in Windows.
+```npm```, therefore I had to use ```7za.exe``` since it doesn't
+seem to exist an uniform way of unzipping files in Windows. Copy ```7za.exe``` along with
+```node-wrapper.bat``` if you use ```node-wrapper``` in Windows (BTW any Windows hacker
+knowing how to fix this unwanted dependency?).
