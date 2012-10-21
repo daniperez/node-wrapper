@@ -1,3 +1,5 @@
+![node-wrapper](http://raw.github.com/daniperez/node-wrapper/gh-pages/node-wrapper-header.png "node-wrapper")
+
 http://daniperez.github.com/node-wrapper/
 
 node-wrapper
