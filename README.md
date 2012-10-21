@@ -1,4 +1,4 @@
-![node-wrapper](http://raw.github.com/daniperez/node-wrapper/gh-pages/node-wrapper-header.png "node-wrapper")
+![node-wrapper](https://github.com/daniperez/node-wrapper/blob/gh-pages/node-wrapper-header.png?raw=true "node-wrapper")
 
 http://daniperez.github.com/node-wrapper/
 
