@@ -1,7 +1,5 @@
 ![node-wrapper](https://github.com/daniperez/node-wrapper/blob/gh-pages/node-wrapper-header.png?raw=true "node-wrapper")
 
-http://daniperez.github.com/node-wrapper/
-
 The goal of node-wrapper is to bootstrap development environments based
 on [node.js](http://nodejs.org) build tools such as [grunt](http://gruntjs.com/)
 or [brunch](http://brunch.io).
