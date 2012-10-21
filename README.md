@@ -53,3 +53,5 @@ The Windows version, ```node-wrapper.bat```, needs to download and unzip
 seem to exist an uniform way of unzipping files in Windows. Copy ```7za.exe``` along with
 ```node-wrapper.bat``` if you use ```node-wrapper``` in Windows (BTW any Windows hacker
 knowing how to fix this unwanted dependency?).
+
+Mingw users use the shell script. Mingw's terminal cannot launch Windows batch files.
