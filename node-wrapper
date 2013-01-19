@@ -49,7 +49,7 @@ guess_tool_name ()
        echo ""                                                         1>&2
        echo "You can also rename $0 to the name of your tool and then" 1>&2
        echo "you won't need to pass the tool name in the command line" 1>&2
-       return 1
+       return 0
     else
       echo "$1"
       shift

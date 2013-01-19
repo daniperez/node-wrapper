@@ -1,0 +1,10 @@
+language: node_js
+
+before_install:
+  - sudo DEBIAN_FRONTEND=noninteractive apt-get -qq -y update > /dev/null
+script:
+  - "./tests.sh"
+
+notifications:
+  email: true 
+  on_failure: change
