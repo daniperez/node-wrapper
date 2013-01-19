@@ -1,4 +1,5 @@
 ![node-wrapper](https://github.com/daniperez/node-wrapper/blob/gh-pages/node-wrapper-header.png?raw=true "node-wrapper")
+
 [![Build Status](https://travis-ci.org/daniperez/node-wrapper.png)](https://travis-ci.org/daniperez/node-wrapper.txt)
 
 The goal of node-wrapper is to bootstrap development environments based
