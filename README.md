@@ -1,6 +1,6 @@
 ![node-wrapper](https://github.com/daniperez/node-wrapper/blob/gh-pages/node-wrapper-header.png?raw=true "node-wrapper")
 
-[![Build Status](https://travis-ci.org/daniperez/node-wrapper.png)](https://travis-ci.org/daniperez/node-wrapper.txt)
+[![Build Status](https://travis-ci.org/daniperez/node-wrapper.png)](https://travis-ci.org/daniperez/node-wrapper)
 
 The goal of node-wrapper is to bootstrap development environments based
 on [node.js](http://nodejs.org) build tools such as [grunt](http://gruntjs.com/)
