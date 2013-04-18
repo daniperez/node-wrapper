@@ -4,7 +4,10 @@
 
 The goal of node-wrapper is to bootstrap development environments based
 on [node.js](http://nodejs.org) build tools such as [grunt](http://gruntjs.com/)
-or [brunch](http://brunch.io).
+or [brunch](http://brunch.io). Inspired by [gradlew](http://www.gradle.org/docs/current/userguide/gradle_wrapper.html).
+
+node-wrapper is an executable that behaves as your build tool of choice (e.g. brunch, grunt) but it 
+will also download [node.js](http://nodejs.org) and install the build tool if they weren't already installed.
 
 The Importance of Bootstrapping 
 -------------------------------
@@ -19,8 +22,7 @@ and the build tool of choice. With ```node-wrapper``` you don't need to install
 any of them: it will check if the tool is available, otherwise it will
 download it along with [node.js](http://nodejs.org) if necessary.
 
-For a better explanation about how good bootstrapping is, check [Zach's Unsucking Your Team's Development Environment presentation](http://zachholman.com/talk/unsucking-your-teams-development-environment). Also inspired by
-[Gradle Wrapper](http://gradle.org/docs/current/userguide/gradle_wrapper.html).
+For a better explanation about how good bootstrapping is, check [Zach's Unsucking Your Team's Development Environment presentation](http://zachholman.com/talk/unsucking-your-teams-development-environment).
 
 Getting started
 ---------------
