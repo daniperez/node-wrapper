@@ -6,5 +6,4 @@ script:
   - "./tests.sh"
 
 notifications:
-  email: true 
-  on_failure: change
+  email: true
