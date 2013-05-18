@@ -23,7 +23,7 @@ NODEJS_VERSION="0.8.9"
 NPM_VERSION="1.1.9"
 NODEJS_PREFIX="$PWD/.node"
 NODEJS_URL="http://nodejs.org/dist/v$NODEJS_VERSION/node-v$NODEJS_VERSION-$OS-x$ARCH.tar.gz"
-LOG_FILE="/dev/null"
+LOG_FILE="log"
 ##########################################################################
 
 _NODEJS_ZIP="$NODEJS_PREFIX/node-$NODEJS_VERSION.zip"
@@ -38,7 +38,7 @@ guess_tool_name ()
 {
   if [ "$(basename $0)" == "node-wrapper" ]; then
     # Script name was not changed. We expect the tool to us as first argument.
-    if [ "x$1" == "x" ]; then
+    if [ "x$1" == "x" ] || [ "$1" == "-h" ] || [ "$1" == "--help" ] || [ "$1" == "help" ]; then
        echo "No arguments passed."                                     1>&2
        echo ""                                                         1>&2
        echo "Usage: $0 [tool] [tool options]"                          1>&2
@@ -49,7 +49,7 @@ guess_tool_name ()
        echo ""                                                         1>&2
        echo "You can also rename $0 to the name of your tool and then" 1>&2
        echo "you won't need to pass the tool name in the command line" 1>&2
-       return 0
+       return 1
     else
       echo "$1"
       shift
@@ -95,7 +95,12 @@ PATH="$_NODEJS_BIN:"node_modules/.bin/":$PATH"
 
 if [ ! $(which "$TOOL" > /dev/null 2>&1 ; echo "$?") -eq 0  ]; then
   echo "Installing $TOOL"
-  "$_NPM_EXE" install "$TOOL" >> "$LOG_FILE" 2>&1 
+  if [ "$TOOL" == "grunt" ]; then
+    "$_NPM_EXE" install grunt-cli >> "$LOG_FILE" 2>&1 
+  else
+    "$_NPM_EXE" install "$TOOL" >> "$LOG_FILE" 2>&1 
+  fi
+
   "$_NPM_EXE" install >> "$LOG_FILE" 2>&1 
 fi
 

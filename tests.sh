@@ -58,7 +58,7 @@ testUrls ()
 
 testGrunt()
 {
-  ./node-wrapper grunt --version | grep "grunt v" > /dev/null 
+  ./node-wrapper grunt --version | grep "grunt-cli" > /dev/null 
 
   result=$?
 
