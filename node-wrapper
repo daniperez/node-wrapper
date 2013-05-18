@@ -23,7 +23,7 @@ NODEJS_VERSION="0.8.9"
 NPM_VERSION="1.1.9"
 NODEJS_PREFIX="$PWD/.node"
 NODEJS_URL="http://nodejs.org/dist/v$NODEJS_VERSION/node-v$NODEJS_VERSION-$OS-x$ARCH.tar.gz"
-LOG_FILE="log"
+LOG_FILE="/dev/null"
 ##########################################################################
 
 _NODEJS_ZIP="$NODEJS_PREFIX/node-$NODEJS_VERSION.zip"
